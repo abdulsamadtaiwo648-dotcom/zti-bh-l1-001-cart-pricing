@@ -76,6 +76,7 @@ def calculate_tax(items: List[Dict[str, Any]], discount_amount: float) -> float:
         item.get("price", 0.0) * item.get("quantity", 0)
         for item in items
         if item.get("category", "").lower() != "gift_card"
+        if item.get("price", 0.0) >= 0 and item.get("quantity", 0) >= 0
     )
 
     if gross_taxable <= 0:
@@ -115,6 +116,13 @@ def calculate_order_summary(cart: Dict[str, Any]) -> Dict[str, Any]:
     subtotal = calculate_subtotal(items)
 
     discount_amount = calculate_tier_discount(subtotal, tier)
+
+    for item in items:
+        if not item.get("is_discountable", True):
+            item_price = item.get("price", 0.0)
+            item_quantity = item.get("quantity", 0)
+            discount_amount -= round(item_price * item_quantity * TIER_DISCOUNT_RATES.get(tier.lower(), 0.00), 2)
+
 
     # Step 3: Discounted Subtotal
     discounted_subtotal = round(max(0.0, subtotal - discount_amount), 2)
