@@ -122,6 +122,10 @@ def calculate_order_summary(cart: Dict[str, Any]) -> Dict[str, Any]:
             item_price = item.get("price", 0.0)
             item_quantity = item.get("quantity", 0)
             discount_amount -= round(item_price * item_quantity * TIER_DISCOUNT_RATES.get(tier.lower(), 0.00), 2)
+        else:
+            item_price = item.get("price", 0.0)
+            item_quantity = item.get("quantity", 0)
+            discount_amount += round(item_price * item_quantity * TIER_DISCOUNT_RATES.get(tier.lower(), 0.00), 2)
 
 
     # Step 3: Discounted Subtotal
